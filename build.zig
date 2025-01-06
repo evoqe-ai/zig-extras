@@ -2,17 +2,21 @@ const std = @import("std");
 
 pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
-    const mode = b.option(std.builtin.Mode, "mode", "") orelse .Debug;
+    const optimize = b.standardOptimizeOption(.{});
 
     _ = b.addModule(
         "extras",
-        .{ .root_source_file = b.path("src/lib.zig") },
+        .{
+            .target = target,
+            .optimize = optimize,
+            .root_source_file = b.path("src/lib.zig"),
+        },
     );
 
     const exe_unit_tests = b.addTest(.{
         .root_source_file = b.path("src/lib.zig"),
         .target = target,
-        .optimize = mode,
+        .optimize = optimize,
     });
 
     const run_exe_unit_tests = b.addRunArtifact(exe_unit_tests);
